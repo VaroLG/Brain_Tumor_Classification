@@ -76,3 +76,7 @@ Definir y construir la arquitectura del modelo de Red Neuronal Convolucional (CN
 Entrenar el modelo utilizando el conjunto de train.
 
 Evaluar el rendimiento final del modelo utilizando el conjunto de test.
+
+
+Una vez clasificadas en carpetas en función del tipo de contraste y de corte, para este modelo de clasificación se escogió un unico contraste y corte, debido al gran número de imágenes generadas a partir del dataset original.
+
