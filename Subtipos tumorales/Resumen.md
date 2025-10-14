@@ -1,6 +1,9 @@
 # Clasificación de Imágenes con EfficientNetB1
+Imágenes extraidas del dataset de Kaggle: https://www.kaggle.com/code/abdallahwagih/brain-tumor-classification-pytorch
 
-Este repositorio contiene un modelo de **clasificación de imágenes** basado en **EfficientNetB1**, implementado con TensorFlow/Keras. El modelo se entrena en múltiples etapas (30 épocas) aplicando técnicas de regularización como **Dropout** y **Batch Normalization** para evitar sobreajuste.
+Este conjunto de datos contiene imágenes de resonancia magnética de subtipos tumorales (Glioma, Meningioma y tumor de la hipófisis) y de imágenes de cerebros sanos. 
+
+Este repositorio contiene el código para construir un modelo de CNN (redes neuronales convolucionales) **clasificación de imágenes** basado en **EfficientNetB1**, implementado con TensorFlow/Keras. El modelo se entrena en múltiples etapas aplicando técnicas de regularización como **Dropout** y **Batch Normalization** para evitar sobreajuste.
 
 ## Contenido
 
