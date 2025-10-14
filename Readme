@@ -1,3 +1,21 @@
+# Clasificación de Gliomas mediante Inteligencia Artificial
+
+Este repositorio recoge tres proyectos complementarios enfocados en la **clasificación automática de tumores cerebrales tipo glioma** a partir de imágenes médicas (MRI), empleando técnicas de **aprendizaje profundo (Deep Learning)** y **transfer learning**.  
+
+El trabajo forma parte de un proyecto de investigación sobre el **análisis de resonancia magnética nuclear de tumores cerebrales con IA**, con el objetivo de desarrollar modelos predictivos que apoyen la práctica clínica en el diagnóstico y pronóstico de pacientes con glioma y glioblastoma.
+
+---
+
+## 🧠 Objetivo general
+
+Desarrollar y evaluar modelos de clasificación basados en redes neuronales convolucionales (CNN) para distintos problemas clínicos asociados al glioma, aprovechando la información visual contenida en imágenes médicas anonimizadas.
+
+---
+
+## 📂 Estructura del proyecto
+
+El repositorio se organiza en tres carpetas principales, cada una dedicada a un problema específico de clasificación:
+
 
 A continuación, se describe brevemente el contenido y propósito de cada módulo.
 
@@ -12,7 +30,6 @@ Este módulo aborda dos problemas de clasificación:
 
 El código organiza las imágenes por categorías y las divide automáticamente en conjuntos de entrenamiento, validación y test para su uso en modelos de aprendizaje profundo.
 
-📘 *Archivo principal:* `Clasificación Train_test_val_LGG_HGG y G_II_III_IV.ipynb`
 
 ---
 
@@ -22,16 +39,12 @@ Este módulo entrena un modelo basado en la arquitectura **EfficientNet**, aplic
 
 El enfoque combina la eficiencia computacional de EfficientNet con técnicas de normalización y regularización, logrando un modelo con buena capacidad de generalización y alta precisión.
 
-📘 *Archivo principal:* `Clasificación Glioma I_II_III_EfficientNet.ipynb`
-
 ---
 
 ### 🧩 3. Clasificación de la supervivencia global en glioblastomas
 
 El tercer módulo busca predecir la **supervivencia global (SG)** de pacientes con **glioblastoma (GBM)** a partir de imágenes médicas.  
 Las imágenes se clasifican en categorías de **alta y baja supervivencia**, empleando redes neuronales convolucionales adaptadas al tamaño y variabilidad del conjunto de datos.
-
-📘 *Archivo principal:* `Clasificación Train_test_val_SG.ipynb`
 
 ---
 
@@ -76,5 +89,4 @@ Proyecto desarrollado dentro del marco del **Trabajo Fin de Máster en Bioinform
 ## 📜 Licencia
 
 Este proyecto se distribuye bajo la licencia **MIT**, permitiendo su libre uso y modificación con fines académicos o de investigación.
-
 
