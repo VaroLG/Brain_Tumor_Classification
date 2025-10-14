@@ -2,6 +2,7 @@ Clasificación de Gliomas en Alto y Bajo Grado (LGG vs HGG)
 
 Proyecto de *Deep Learning* orientado a la **clasificación automática de gliomas** (tumores cerebrales) en imágenes de **Resonancia Magnética (RM)**, empleando **Redes Neuronales Convolucionales (CNN)**.  
 
+Imágenes extraidas del dataset REMBRANDT del TCIA https://www.cancerimagingarchive.net/collection/rembrandt/
 ---
 
 ## 📂 Descripción del Proyecto
