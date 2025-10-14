@@ -1,7 +1,7 @@
 # Clasificación de Gliomas mediante EfficientNet
 
 Este proyecto tiene como objetivo el **entrenamiento de un modelo de clasificación de imágenes de gliomas** utilizando la arquitectura **EfficientNet**, un modelo de red neuronal convolucional preentrenado ampliamente utilizado en tareas de visión por computador.  
-
+Imágenes extraidas del dataset REMBRANDT DEL TCIA: https://www.cancerimagingarchive.net/collection/rembrandt/
 El trabajo se centra en la **clasificación automática de tumores cerebrales según su grado histológico (II, III y IV)** a partir de imágenes médicas, buscando aportar una herramienta que facilite la diferenciación de grados tumorales de forma automatizada y eficiente.
 
 ---
