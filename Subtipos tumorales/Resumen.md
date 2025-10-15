@@ -1,67 +1,96 @@
-# Clasificación de Imágenes con EfficientNetB1
-Imágenes extraidas del dataset de Kaggle: https://www.kaggle.com/code/abdallahwagih/brain-tumor-classification-pytorch
+# 🧠 Clasificación de Subtipos tumorales de cerebro con EfficientNetB1
 
-Este conjunto de datos contiene imágenes de resonancia magnética de subtipos tumorales (Glioma, Meningioma y tumor de la hipófisis) y de imágenes de cerebros sanos. 
+Este proyecto implementa una red neuronal convolucional basada en **EfficientNetB1** para la **clasificación automática de subtipos tumorales de cerebro** a partir de imágenes de resonancia magnética (MRI) de un dataset de Kaggle.  
 
-Este repositorio contiene el código para construir un modelo de CNN (redes neuronales convolucionales) **clasificación de imágenes** basado en **EfficientNetB1**, implementado con TensorFlow/Keras. El modelo se entrena en múltiples etapas aplicando técnicas de regularización como **Dropout** y **Batch Normalization** para evitar sobreajuste.
+https://www.kaggle.com/datasets/sartajbhuvaji/brain-tumor-classification-mri
 
-## Contenido
+Se utiliza un enfoque de **transfer learning**, ajustando las capas superiores del modelo preentrenado e incorporando capas densas personalizadas con técnicas de regularización y normalización.
 
-- `Clasificación_EfficientNetB1-30 etapas-Dropout.ipynb`: Notebook principal con todo el flujo de trabajo y comentarios explicativos.
-- Carpeta `data/`: Estructura de datos con las imágenes organizadas en subcarpetas por clase (no incluida en el repositorio).
+---
 
-## Requisitos
+## ⚙️ Descripción del Proyecto
 
-Antes de ejecutar el notebook, asegúrate de tener instaladas las siguientes dependencias:
+El objetivo es clasificar imágenes de gliomas según su **subtipo tumoral** (Glioma, Meningioma, Tumor de la glándula hipófisis y ausencia de tumor), optimizando la precisión del modelo mediante **entrenamiento por etapas** y estrategias de **regularización** como *Dropout*.
 
-```bash
-pip install numpy pandas matplotlib seaborn scikit-learn tensorflow
-```
+El flujo general del proyecto incluye:
+1. Carga y preprocesamiento de datos.
+2. Construcción y configuración de la red EfficientNetB1.
+3. Entrenamiento del modelo en múltiples etapas.
+4. Evaluación mediante métricas de rendimiento y visualización de resultados.
 
-## Flujo de trabajo y código
+---
 
-El notebook está organizado en secciones comentadas para facilitar la comprensión:
+## 🧩 Arquitectura del Modelo
 
-1. **Importación de librerías**: se cargan las librerías necesarias para la manipulación de datos, visualización y construcción del modelo. Algunas importaciones redundantes han sido marcadas en comentarios.
+El modelo se basa en la arquitectura **EfficientNetB1**, que optimiza simultáneamente profundidad, ancho y resolución de la red para obtener un equilibrio entre **rendimiento y eficiencia computacional**.  
 
-2. **Carga de datos**: se utiliza `ImageDataGenerator` para leer las imágenes desde carpetas y aplicar aumentación de datos (rotaciones, flips, etc.), mejorando la robustez del modelo.
+A partir de esta base preentrenada (en ImageNet), se añaden capas densas personalizadas para adaptar el modelo a la tarea de clasificación de subtipos de tumor.
 
-3. **Exploración y visualización**: con `matplotlib` y `seaborn` se visualizan ejemplos de imágenes y la distribución de clases, lo que ayuda a identificar posibles desbalances.
+### 🔹 Estructura general:
 
-4. **Definición del modelo**:
+1. **Base convolucional (EfficientNetB1 preentrenada)**  
+   - Se utiliza como *feature extractor*, congelando inicialmente sus pesos para aprovechar el conocimiento previo aprendido sobre patrones visuales.  
+   - Incluye bloques MBConv (Mobile Inverted Bottleneck Convolution) con conexiones residuales, *batch normalization* y activaciones *Swish*.
 
-   - Se carga `EfficientNetB1` preentrenado en ImageNet como base del modelo.
-   - Se añaden capas densas adicionales con activación `relu`, junto con **Batch Normalization** y **Dropout** para mejorar la generalización y reducir el sobreajuste.
-   - La capa final utiliza `softmax` para obtener probabilidades de cada clase.
+2. **Global Average Pooling (GAP)**  
+   - Reduce el volumen tridimensional de salida de la EfficientNet a un vector 1D, resumiendo la información espacial de cada mapa de activación.  
+   - Evita el uso de capas Flatten, mejorando la eficiencia y reduciendo el sobreajuste.
 
-5. **Entrenamiento**:
+3. **Capas Densas Personalizadas**
+   - Se añaden varias capas **Dense** (totalmente conectadas) con activación ReLU.  
+   - Estas capas permiten combinar las características extraídas por la base convolucional y generar representaciones más específicas para la tarea de clasificación.
 
-   - Se compila el modelo con `Adam` como optimizador y función de pérdida adecuada para clasificación multiclase.
-   - Se monitoriza la pérdida y la exactitud durante el entrenamiento.
-   - Se aplican callbacks como `EarlyStopping` y `ModelCheckpoint` (si están activados) para detener el entrenamiento a tiempo y guardar el mejor modelo.
+4. **Batch Normalization**
+   - Normaliza las activaciones de cada capa, estabilizando el entrenamiento y acelerando la convergencia.  
+   - Ayuda a reducir la sensibilidad a los cambios en la distribución de entrada.
 
-6. **Evaluación**:
+5. **Dropout**
+   - Se utiliza tras las capas densas para evitar el sobreajuste.  
+   - Durante el entrenamiento, desactiva aleatoriamente una fracción de neuronas (por ejemplo, `rate=0.5`), lo que obliga al modelo a no depender de conexiones específicas.  
+   - En inferencia, todas las neuronas están activas, pero sus salidas se escalan proporcionalmente a la tasa de Dropout.  
+   - Resultado: un modelo más robusto y generalizable.
 
-   - Se calculan métricas con `classification_report` (precisión, recall, F1-score).
-   - Se construye una matriz de confusión con `sklearn.metrics` para visualizar los aciertos y errores en cada clase.
+6. **Capa de salida (Softmax)**
+   - Número de neuronas igual al número de clases (en este caso, 4).  
+   - Función de activación **Softmax**, que convierte las salidas en probabilidades normalizadas para cada clase.
 
-Cada celda del notebook incluye comentarios que explican la lógica del código, desde la preparación de los datos hasta la interpretación de resultados.
+---
 
-## Uso
+## 🧠 Entrenamiento por Etapas
 
-Para ejecutar el proyecto:
+El modelo se entrena en **30 etapas** para lograr una convergencia estable:
 
-```bash
-jupyter notebook Clasificación_EfficientNetB1-30 etapas-Dropout.ipynb
-```
+1. **Primera etapa:**  
+   - Se entrena únicamente la parte superior de la red (capas densas personalizadas).  
+   - La base EfficientNetB1 permanece congelada.
 
-## Notas sobre las librerías
+2. **Etapas posteriores:**  
+   - Se descongelan progresivamente capas de la EfficientNetB1 para realizar *fine-tuning*.  
+   - Se aplican tasas de aprendizaje más pequeñas para no alterar los pesos preentrenados de forma drástica.
 
-- `sklearn.metrics` estaba importado dos veces → se dejó una sola importación.
-- `Sequential`, `Conv2D`, `MaxPool2D`, `Flatten` podrían eliminarse si no se usan en el modelo final.
-- `re` y `defaultdict` también podrían eliminarse si no se usan en la preparación de datos.
+3. **Optimizador y funciones de pérdida:**  
+   - Optimizador: **Adam** o **AdamW**.  
+   - Función de pérdida: **Categorical Crossentropy**.  
+   - Métricas de evaluación: *Accuracy, Recall, Precision, F1-score* y *Especificidad*.
 
-## Autor
+---
 
-Álvaro Linacero Gracia
+## 📊 Evaluación del Modelo
+
+Durante el entrenamiento y validación se monitorizan las siguientes métricas:
+
+- **Accuracy (exactitud global)**  
+- **Precision y Recall por clase**  
+- **F1-score promedio**  
+- **Especificidad (minimiza falsos positivos)**  
+
+Además, se generan las siguientes visualizaciones:
+- Curvas de pérdida y precisión por época.  
+- Matriz de confusión.  
+- Curva ROC y área bajo la curva (AUC).
+
+---
+
+## 🧱 Estructura del Repositorio
+
 
