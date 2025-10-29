@@ -1,6 +1,6 @@
 # 🧠 Clasificación de Gliomas mediante Redes Neuronales Convolucionales (CNN)
 
-Este repositorio recoge tres proyectos complementarios enfocados en la **clasificación automática de tumores cerebrales tipo glioma** a partir de imágenes médicas (MRI), empleando técnicas de **aprendizaje profundo (Deep Learning)** y **transfer learning**.  
+Este repositorio recoge tres proyectos complementarios enfocados en la **clasificación automática de tumores cerebrales** a partir de imágenes médicas (MRI), empleando técnicas de **aprendizaje profundo (Deep Learning)** y **transfer learning**.  
 
 El trabajo forma parte de un proyecto de investigación sobre el **análisis de resonancia magnética nuclear de tumores cerebrales con IA**, con el objetivo de desarrollar modelos predictivos que apoyen la práctica clínica en el diagnóstico y pronóstico de pacientes con glioma y glioblastoma.
 
@@ -8,7 +8,7 @@ El trabajo forma parte de un proyecto de investigación sobre el **análisis de 
 
 ## 🎯 Objetivo general
 
-Desarrollar y evaluar modelos de clasificación basados en **redes neuronales convolucionales (CNN)** para distintos problemas clínicos asociados al glioma, aprovechando la información visual contenida en imágenes médicas de resonancia magnética anonimizadas.
+Desarrollar y evaluar modelos de clasificación basados en **redes neuronales convolucionales (CNN)** para distintos problemas clínicos, aprovechando la información visual contenida en imágenes médicas de resonancia magnética anonimizadas.
 
 ---
 
@@ -24,8 +24,7 @@ A continuación, se describe brevemente el contenido y propósito de cada módul
 
 Este módulo aborda dos problemas de clasificación:
 
-- **Clasificación binaria:** distingue entre **gliomas de bajo grado (LGG)** y **gliomas de alto grado (HGG)**.  
-- **Clasificación multiclase:** diferencia entre **gliomas de grado II, III y IV**.
+- **Clasificación multiclase:** Clasificación de las imágenes en función del subtipo de tumor (Ausencia de tumor, GLioma, Meningioma y tumor de la glándula hipófisis)
 
 El código organiza las imágenes por categorías y las divide automáticamente en conjuntos de **entrenamiento**, **validación** y **test** para su uso en modelos de aprendizaje profundo.
 
@@ -35,6 +34,8 @@ El código organiza las imágenes por categorías y las divide automáticamente 
 
 Este módulo entrena un modelo basado en la arquitectura **EfficientNet**, aplicando *transfer learning* para clasificar las imágenes de gliomas en función de su grado histológico (II, III, IV).  
 
+- **Clasificación binaria:** distingue entre **gliomas de bajo grado (LGG)** y **gliomas de alto grado (HGG)**.  
+- **Clasificación multiclase:** diferencia entre **gliomas de grado II, III y IV**.
 El enfoque combina la eficiencia computacional de EfficientNet con técnicas de **normalización y regularización**, logrando un modelo con buena capacidad de generalización y alta precisión.
 
 ---
@@ -60,14 +61,14 @@ Las imágenes se clasifican en categorías de **alta y baja supervivencia**, emp
 
 ## 🧾 Conjuntos de datos
 
-Los conjuntos de imágenes provienen de bases de datos públicas como **The Cancer Imaging Archive (TCIA)**, concretamente del **UPENN GBM Dataset**, en formato **NIfTI**, posteriormente procesado en **2D (slices)** y convertido a imágenes **PNG** para optimizar su manejo computacional.
+Los conjuntos de imágenes provienen de bases de datos públicas como **The Cancer Imaging Archive (TCIA)**, concretamente del **UPENN GBM Dataset**, en formato **NIfTI**, posteriormente procesado en **2D (slices)** y convertido a imágenes **PNG** para optimizar su manejo computacional para lasa imágenes de GBM. También de la Base de datos Rembrand para las imágenes de Glioma y de un dataset de Kaggle para los subtipos tumorales.
 
 ---
 
 ## 🚀 Objetivos específicos
 
 - Implementar una **pipeline reproducible** para la clasificación de imágenes médicas.  
-- Evaluar modelos **preentrenados (EfficientNet, ResNet, etc.)** adaptados a distintos tipos de glioma.  
+- Evaluar modelos **preentrenados (EfficientNet, ResNet, etc.)** adaptados a resolver distintos problemas de clasificación.  
 - Analizar la relación entre **imágenes radiológicas y variables clínicas** como el grado tumoral o la supervivencia.  
 
 ---
