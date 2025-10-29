@@ -1,4 +1,4 @@
-# 🧠 Clasificación de Gliomas mediante Inteligencia Artificial
+# 🧠 Clasificación de Gliomas mediante Redes Neuronales Convolucionales (CNN)
 
 Este repositorio recoge tres proyectos complementarios enfocados en la **clasificación automática de tumores cerebrales tipo glioma** a partir de imágenes médicas (MRI), empleando técnicas de **aprendizaje profundo (Deep Learning)** y **transfer learning**.  
 
@@ -8,7 +8,7 @@ El trabajo forma parte de un proyecto de investigación sobre el **análisis de 
 
 ## 🎯 Objetivo general
 
-Desarrollar y evaluar modelos de clasificación basados en **redes neuronales convolucionales (CNN)** para distintos problemas clínicos asociados al glioma, aprovechando la información visual contenida en imágenes médicas anonimizadas.
+Desarrollar y evaluar modelos de clasificación basados en **redes neuronales convolucionales (CNN)** para distintos problemas clínicos asociados al glioma, aprovechando la información visual contenida en imágenes médicas de resonancia magnética anonimizadas.
 
 ---
 
