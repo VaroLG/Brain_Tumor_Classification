@@ -1,0 +1,53 @@
+# Estudio radiogenómico: necrosis en RM vs hipoxia multiómica en GBM
+# Implementa docs/PLAN_ANALISIS_RADIOGENOMICA.md. Ejecutar con:
+#   btc rg-analyze --config configs/radiogenomics_necrosis_hypoxia.yaml --out-dir runs/rg
+#
+# Las rutas de `data` son las que generan `btc rg-imaging`, `rg-fetch-tcga` y
+# `rg-fetch-cptac`. Los GMT se descargan de MSigDB (https://www.gsea-msigdb.org):
+#   - Hallmarks (h.all...symbols.gmt): contiene HALLMARK_HYPOXIA
+#   - C2 CGP (c2.cgp...symbols.gmt): contiene BUFFA_HYPOXIA_METAGENE
+
+data:
+  gmt:
+    - data/msigdb/h.all.Hs.symbols.gmt
+    - data/msigdb/c2.cgp.Hs.symbols.gmt
+  discovery:
+    name: TCGA-GBM
+    imaging: data/rg/tcga_imaging.csv
+    clinical: data/rg/tcga_clinical.csv
+    layers:
+      rna: data/rg/tcga_expression.csv            # microarray U133A (log2)
+  validation:
+    name: CPTAC-GBM
+    imaging: data/rg/cptac_imaging.csv
+    clinical: data/rg/cptac_clinical.csv
+    layers:
+      rna: data/rg/cptac_transcriptomics.csv      # RNA-seq, log2(UQ+1)
+      protein: data/rg/cptac_proteomics.csv
+      phospho: data/rg/cptac_phosphoproteomics.csv
+      acetyl: data/rg/cptac_acetylproteomics.csv
+      cnv: data/rg/cptac_CNV.csv
+      mirna: data/rg/cptac_miRNA.csv
+      xcell: data/rg/cptac_xcell.csv
+      cibersort: data/rg/cptac_cibersort.csv
+      purity: data/rg/cptac_tumor_purity.csv
+      # metabolome: data/rg/cptac_metabolome.csv  # opcional: tabla suplementaria
+
+analysis:
+  primary_signature: HALLMARK_HYPOXIA
+  sensitivity_signatures: [BUFFA_HYPOXIA_METAGENE]
+  exposure: necrosis_fraction_core          # V_NCR / (V_NCR + V_ET)
+  secondary_exposure: log_v_ncr
+  covariates: [age, log_v_total]
+  primary_layer: rna
+  validation_layers: [rna, protein]
+  purity_column: purity                     # REVISAR: nombre real de la columna en cptac_tumor_purity.csv
+  scorer: mean_z
+  alt_scorer: singscore
+  exclude_idh_mutant: true
+  n_perm: 10000
+  n_boot: 5000
+  n_random_sets: 1000
+  fdr: 0.10
+  min_signature_genes: 10
+  seed: 42

@@ -15,6 +15,7 @@ dependencies = [
     "numpy>=1.26",
     "pandas>=2.0",
     "scikit-learn>=1.3",
+    "scipy>=1.11",
     "pillow>=10.0",
     "pyyaml>=6.0",
     "matplotlib>=3.8",
@@ -23,6 +24,8 @@ dependencies = [
 [project.optional-dependencies]
 # Lectores de formatos médicos: solo hacen falta para construir el dataset
 medical = ["nibabel>=5.0", "pydicom>=2.4"]
+# Estudio radiogenómico: descarga de CPTAC (TCGA se descarga vía API REST, sin extras)
+omics = ["cptac>=1.5", "nibabel>=5.0"]
 dev = ["pytest>=8.0", "ruff>=0.5", "nibabel>=5.0", "pydicom>=2.4"]
 
 [project.scripts]

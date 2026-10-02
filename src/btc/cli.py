@@ -212,6 +212,11 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("evaluate", help="Re-evaluar un run guardado")
     s.add_argument("--run-dir", required=True)
     s.set_defaults(func=_cmd_evaluate)
+
+    # Comandos del estudio radiogenómico (btc rg-*)
+    from btc.radiogenomics.cli import add_subparsers
+
+    add_subparsers(sub)
     return p
 
 

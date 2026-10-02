@@ -25,6 +25,36 @@ UOC, enero de 2025), reescrito como paquete Python reproducible. La memoria comp
 | Supervivencia global en GBM | [UPENN-GBM (TCIA)](https://www.cancerimagingarchive.net/collection/upenn-gbm/) | corta · larga (umbral = mediana, con censura) | `configs/gbm_survival_upenn.yaml` |
 | IDH1 / MGMT en GBM *(nuevo)* | UPENN-GBM | wildtype · mutant / no metilado · metilado | `configs/gbm_idh_upenn.yaml`, `configs/gbm_mgmt_upenn.yaml` |
 
+## Estudio radiogenómico: necrosis en RM e hipoxia multiómica *(nuevo)*
+
+Extensión del TFM hacia las ómicas con una pregunta concreta: **¿la proporción de tumor
+necrótico que se ve en la RM refleja el programa molecular de hipoxia, a nivel de ARN y de
+proteína?** El plan está prerregistrado (hipótesis, variables, tests y criterios de éxito fijados
+antes de ver los datos) en [`docs/PLAN_ANALISIS_RADIOGENOMICA.md`](docs/PLAN_ANALISIS_RADIOGENOMICA.md).
+
+| Fase | Cohorte | Datos | Qué se afirma |
+|---|---|---|---|
+| Confirmatorio | TCGA-GBM | Segmentación experta BraTS + microarray U133A | Un único test: ρ parcial de Spearman necrosis ↔ `HALLMARK_HYPOXIA`, ajustado por edad y volumen |
+| Robustez | TCGA-GBM | Ídem | Otro método de puntuación, otra firma, control con 1 000 firmas aleatorias |
+| Validación | CPTAC-GBM | RNA-seq **y proteoma** | Replica / consistente pero sin potencia / no replica + estimación combinada |
+| Exploratorio | Ambas | Todas las capas: transcriptoma, proteoma, fosfo- y acetiloma, CNV, miRNA, tipos celulares | Hipótesis con FDR, etiquetadas como tales |
+
+```bash
+pip install -e ".[omics]"
+python scripts/demo_radiogenomics.py           # todo el estudio sobre cohortes sintéticas (~20 s)
+
+# Con datos reales (en tu ordenador):
+btc rg-imaging --seg-root data/BraTS-TCGA-GBM --out data/rg/tcga_imaging.csv
+btc rg-overlap --imaging data/rg/tcga_imaging.csv --cbioportal-list gbm_tcga_mrna_U133   # ¡primero!
+btc rg-fetch-tcga --gmt data/msigdb/h.all.Hs.symbols.gmt data/msigdb/c2.cgp.Hs.symbols.gmt --out-dir data/rg
+btc rg-fetch-cptac --out-dir data/rg
+btc rg-analyze --config configs/radiogenomics_necrosis_hypoxia.yaml --out-dir runs/radiogenomica
+```
+
+`rg-overlap` aplica la regla de factibilidad del plan (n ≥ 85 procede; n < 60 se detiene) antes
+de descargar nada más. El código se valida sobre cohortes sintéticas con efecto conocido: recupera
+el efecto cuando existe y su tasa de falsos positivos sin efecto es la nominal (≈ 5 %).
+
 ## Qué cambia respecto al código original del TFM
 
 Los notebooks originales se conservan en [`legacy/tfm_notebooks/`](legacy/tfm_notebooks/) para
@@ -138,6 +168,7 @@ src/btc/
 ├── train.py              # entrenamiento en 2 fases
 ├── evaluate.py           # métricas por paciente + bootstrap
 ├── synthetic.py          # datos sintéticos para tests y demo
+├── radiogenomics/        # estudio necrosis ↔ hipoxia: imagen, cohortes, firmas, estadística
 └── cli.py                # comando `btc`
 configs/                  # un YAML por experimento
 tests/                    # pytest (corre en CPU con datos sintéticos)

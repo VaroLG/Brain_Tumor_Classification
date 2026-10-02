@@ -36,6 +36,15 @@ MGMT y features radiómicas precalculadas. Sin descargar nada nuevo:
       imagen + IDH + MGMT + edad. Aprovecha los pacientes censurados que la
       binarización actual tiene que descartar.
 
+## ✅ Implementado: necrosis en RM ↔ hipoxia multiómica
+
+El estudio concreto elegido para demostrar la línea radiogenómica está
+implementado en `src/btc/radiogenomics/` con plan prerregistrado en
+[`PLAN_ANALISIS_RADIOGENOMICA.md`](PLAN_ANALISIS_RADIOGENOMICA.md):
+descubrimiento en TCGA-GBM (microarray U133A), validación en CPTAC-GBM (ARN y
+proteína) y exploración de todas las capas ómicas. Pendiente: ejecutarlo con
+los datos reales tras comprobar el solapamiento (`btc rg-overlap`).
+
 ## Fase 2 — Imagen + genoma con TCGA
 
 Los pacientes de TCGA-GBM y TCGA-LGG tienen RM en TCIA y, por otro lado,
