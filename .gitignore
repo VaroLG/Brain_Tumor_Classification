@@ -1,0 +1,30 @@
+# --- Datos médicos: NUNCA se suben al repositorio ---
+# Las licencias de TCIA (UPENN-GBM, REMBRANDT) no permiten redistribuirlos
+# y además pesan decenas de GB. Cada usuario los descarga por su cuenta.
+/data/
+*.nii
+*.nii.gz
+*.dcm
+
+# --- Resultados de entrenamiento (modelos, métricas, figuras) ---
+/runs/
+*.keras
+*.h5
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# --- Jupyter / IDEs / SO ---
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
