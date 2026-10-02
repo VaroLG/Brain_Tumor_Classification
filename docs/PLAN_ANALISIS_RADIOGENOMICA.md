@@ -187,7 +187,9 @@ cuando no existe.
 | 2026-10-02 | Acceso a imágenes en TCIA | Las colecciones cerebrales con DICOM original (TCGA-GBM, TCGA-LGG, CPTAC-GBM, REMBRANDT, Ivy GAP…) están bajo **TCIA Restricted License** (riesgo de reconstrucción facial): requieren cuenta de TCIA y acuerdo de licencia aprobado. De las colecciones cerebrales, solo UPENN-GBM es pública anónima. |
 | 2026-10-02 | BraTS-TCGA-GBM | Paquete procesado (sin cráneo, con segmentaciones) de acceso abierto (CC BY 3.0) vía Aspera: **102 pacientes**. Es la fuente de imagen del descubrimiento; no requiere la licencia restringida. |
 | pendiente | Solapamiento 102 ∩ U133A | Requiere la lista de pacientes del paquete BraTS-TCGA-GBM (`btc rg-overlap`). |
-| pendiente | Imagen de CPTAC-GBM | Requiere licencia restringida de TCIA (DICOM original) o los casos CPTAC incluidos en BraTS 2021 (sin cráneo, segmentados; acceso vía Synapse/TCIA). |
+| 2026-10-02 | Licencia restringida de TCIA para CPTAC-GBM | **Concedida** (correo del Help Desk de TCIA, colección CPTAC-GBM, DOI 10.7937/K9/TCIA.2018.3RJE41Q1). Vigencia de 3 años desde la aprobación. La imagen de validación queda disponible; sus derivados por paciente siguen sin poder publicarse. |
+| pendiente | Imagen de BraTS-TCGA-GBM y CPTAC-GBM en local | No se han encontrado en Descargas, `Bioinfor y Bioest`, `PDC_Download` ni Documentos (en `PDC_Download` hay solo un manifiesto y una descarga incompleta). Hay que localizarlas o descargarlas. |
+| pendiente | Secuencias y segmentación de CPTAC-GBM | Comprobar cuántos pacientes tienen T1, T1c, T2 y FLAIR preoperatorias. Las máscaras no vienen con la colección: usar los casos CPTAC de BraTS 2021 si están, o una segmentación automática con un modelo BraTS preentrenado (que se declarará como desviación). |
 
 ## 9. Desviaciones del plan
 | Fecha | Cambio | Motivo |
