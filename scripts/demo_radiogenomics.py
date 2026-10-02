@@ -49,7 +49,7 @@ def write_scenario(root: Path, effect: float) -> Path:
         "data": {
             "gmt": [str(data / "firmas.gmt")],
             "discovery": d_spec,
-            "validation": dump(val, "cptac"),
+            "validation": {**dump(val, "cptac"), "license": "restricted", "id_format": "cptac"},
         },
         "analysis": {
             "primary_signature": "HYPOXIA_SYNTH",

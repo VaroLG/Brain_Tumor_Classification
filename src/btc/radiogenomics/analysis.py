@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from btc.radiogenomics.publish import patient_output_dir, scan_for_patient_ids
 from btc.radiogenomics.signatures import SCORERS, signature_coverage
 from btc.radiogenomics.stats import (
     compare_and_pool,
@@ -48,6 +49,11 @@ class CohortData:
     imaging: pd.DataFrame  # índice patient_id; columnas de imaging.region_volumes
     clinical: pd.DataFrame  # índice patient_id; al menos las covariables clínicas
     layers: dict[str, pd.DataFrame]  # capa -> pacientes × características
+    # Licencia de la IMAGEN de esta cohorte. Si es restringida (p. ej. RM de
+    # CPTAC bajo la TCIA Restricted License), las salidas por paciente van a
+    # solo_local/ y no se publican. Ver docs/DATOS_Y_LICENCIAS.md.
+    restricted: bool = False
+    id_format: str | None = None  # "tcga", "cptac"... para el escaneo previo a publicar
 
 
 @dataclass
@@ -338,15 +344,19 @@ def run_study(
     disc = run_discovery(discovery, sigs, cfg)
     report["discovery"] = disc
     conf = disc["confirmatory"]
+    # La dispersión de residuos muestra un punto por paciente: es una salida por
+    # paciente, así que va a solo_local/ si la imagen de la cohorte es restringida.
+    disc_dir = patient_output_dir(out_dir, discovery.restricted)
     _plot_residuals(
         disc["_table"],
         conf["score"],
         cfg,
         conf["result"]["rho"],
-        out_dir / "confirmatorio_residuos.png",
+        disc_dir / "confirmatorio_residuos.png",
         f"Descubrimiento ({discovery.name})",
     )
     _plot_null(conf["_null"], conf["result"]["rho"], out_dir / "control_firmas_aleatorias.png")
+    _export_patient_table(discovery, {cfg.primary_layer: conf["score"]}, cfg, out_dir)
 
     if validation is not None:
         val = run_validation(validation, sigs, cfg)
@@ -357,6 +367,9 @@ def run_study(
             e["vs_discovery"] = comp
             e["verdict"] = validation_verdict(v["rho"], e["p_one_sided"], comp["heterogeneity_p"])
         report["validation"] = val
+        _export_patient_table(
+            validation, {k: e["test"]["score"] for k, e in val["layers"].items()}, cfg, out_dir
+        )
     if exploratory:
         report["exploratory"] = {discovery.name: run_exploratory(discovery, cfg, out_dir)}
         if validation is not None:
@@ -365,8 +378,44 @@ def run_study(
     clean = _strip_private(report)
     (out_dir / "informe.json").write_text(json.dumps(clean, indent=2, ensure_ascii=False))
     (out_dir / "resumen.md").write_text(summary_markdown(clean))
+
+    # Comprobación previa a publicar: ningún ID de cohorte restringida fuera de solo_local/
+    restricted_ids = [
+        c.id_format
+        for c in (discovery, validation)
+        if c is not None and c.restricted and c.id_format
+    ]
+    findings = scan_for_patient_ids(out_dir, restricted_ids)
+    report["publish_check"] = [f.__dict__ for f in findings]
+    for f in findings:
+        log.warning(
+            "IDs de cohorte restringida fuera de solo_local/: %s (%d IDs, p. ej. %s)",
+            f.path,
+            f.n_ids,
+            f.example,
+        )
     log.info("Informe en %s", out_dir)
     return report
+
+
+def _export_patient_table(
+    cohort: CohortData, scores: dict[str, pd.Series], cfg: StudyConfig, out_dir: Path
+) -> Path:
+    """Tabla por paciente (exposición, covariables, puntuaciones) para auditar el análisis.
+
+    Es una obra derivada por paciente: en cohortes restringidas va a solo_local/.
+    """
+    base = cohort.imaging.join(cohort.clinical, how="inner", rsuffix="_clin")
+    cols = [
+        c
+        for c in dict.fromkeys([cfg.exposure, cfg.secondary_exposure, *cfg.covariates])
+        if c in base
+    ]
+    sc = pd.concat({f"score_{k}": s for k, s in scores.items()}, axis=1)
+    table = base[cols].join(sc, how="inner")
+    path = patient_output_dir(out_dir, cohort.restricted) / f"pacientes_{cohort.name}.csv"
+    table.to_csv(path, index_label="patient_id")
+    return path
 
 
 def summary_markdown(rep: dict) -> str:

@@ -284,3 +284,50 @@ def test_false_positive_rate_is_nominal():
         ps.append(r.p_perm)
     assert abs(np.mean(rhos)) < 0.05
     assert np.mean(np.array(ps) < 0.05) <= 0.15  # 5 % nominal + margen por n=60 cohortes
+
+
+# --- salvaguardas de publicación -------------------------------------------------
+def _as_cptac_ids(cohort: dict) -> dict:
+    """Renombra los pacientes sintéticos al formato real de CPTAC (C3L-00000)."""
+    mapping = {p: f"C3L-{i:05d}" for i, p in enumerate(cohort["imaging"].index)}
+
+    def ren(df):
+        return df.rename(index=mapping)
+
+    cohort["imaging"], cohort["clinical"] = ren(cohort["imaging"]), ren(cohort["clinical"])
+    cohort["layers"] = {k: ren(v) for k, v in cohort["layers"].items()}
+    return cohort
+
+
+def test_restricted_cohort_outputs_go_to_local_only(tmp_path):
+    from btc.radiogenomics.analysis import CohortData, StudyConfig, run_study
+
+    d = make_cohort(80, effect=0.5, seed=31)
+    v = _as_cptac_ids(make_cohort(60, effect=0.5, seed=32, prefix="VAL"))
+    cfg = StudyConfig(primary_signature="HYPOXIA_SYNTH", n_perm=200, n_boot=50, n_random_sets=50)
+    rep = run_study(
+        CohortData("TCGA", d["imaging"], d["clinical"], {"rna": d["layers"]["rna"]}),
+        d["signatures"],
+        cfg,
+        tmp_path,
+        validation=CohortData(
+            "CPTAC", v["imaging"], v["clinical"], v["layers"], restricted=True, id_format="cptac"
+        ),
+    )
+    assert (tmp_path / "pacientes_TCGA.csv").exists()  # cohorte abierta: publicable
+    assert (tmp_path / "solo_local" / "pacientes_CPTAC.csv").exists()
+    assert (tmp_path / "solo_local" / "LEEME.md").exists()
+    assert not (tmp_path / "pacientes_CPTAC.csv").exists()
+    assert rep["publish_check"] == []  # nada restringido fuera de solo_local
+
+
+def test_scan_detects_leaked_restricted_ids(tmp_path):
+    from btc.radiogenomics.publish import scan_for_patient_ids
+
+    (tmp_path / "solo_local").mkdir()
+    (tmp_path / "solo_local" / "ok.csv").write_text("patient_id\nC3L-00016\n")
+    (tmp_path / "resumen.md").write_text("rho = 0.3, n = 60\n")
+    assert scan_for_patient_ids(tmp_path, ["cptac"]) == []
+    (tmp_path / "fuga.csv").write_text("patient_id,x\nC3L-00016,1\nC3N-00002,2\n")
+    found = scan_for_patient_ids(tmp_path, ["cptac"])
+    assert len(found) == 1 and found[0].n_ids == 2 and found[0].path.endswith("fuga.csv")

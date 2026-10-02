@@ -151,12 +151,30 @@ def _cmd_fetch_cptac(a: argparse.Namespace) -> None:
 def _load_cohort(spec: dict):
     from btc.radiogenomics.analysis import CohortData
 
+    license_ = spec.get("license", "open")
+    if license_ not in ("open", "restricted"):
+        raise SystemExit(f"license debe ser 'open' o 'restricted' (cohorte {spec['name']})")
     return CohortData(
         name=spec["name"],
         imaging=_read_table(spec["imaging"]),
         clinical=_read_table(spec["clinical"]),
         layers={k: _read_table(v) for k, v in spec["layers"].items()},
+        restricted=license_ == "restricted",
+        id_format=spec.get("id_format"),
     )
+
+
+def _cmd_check_publish(a: argparse.Namespace) -> None:
+    """Busca IDs de pacientes de cohortes restringidas fuera de solo_local/ antes de publicar."""
+    from btc.radiogenomics.publish import scan_for_patient_ids
+
+    findings = scan_for_patient_ids(a.dir, a.cohorts)
+    if not findings:
+        print(f"OK: ningún ID de {', '.join(a.cohorts)} fuera de solo_local/ en {a.dir}")
+        return
+    for f in findings:
+        print(f"⚠ {f.path}: {f.n_ids} IDs (p. ej. {f.example})")
+    raise SystemExit("Hay ficheros con IDs de pacientes de cohortes restringidas: no publicar")
 
 
 def _cmd_analyze(a: argparse.Namespace) -> None:
@@ -236,3 +254,11 @@ def add_subparsers(sub: argparse._SubParsersAction) -> None:
     s.add_argument("--out-dir", required=True)
     s.add_argument("--no-exploratory", action="store_true")
     s.set_defaults(func=_cmd_analyze)
+
+    s = sub.add_parser(
+        "rg-check-publish",
+        help="Comprueba que no haya IDs de cohortes restringidas fuera de solo_local/",
+    )
+    s.add_argument("--dir", required=True, help="Carpeta a revisar (p. ej. runs/radiogenomica)")
+    s.add_argument("--cohorts", nargs="+", default=["cptac"], choices=["cptac", "tcga", "upenn"])
+    s.set_defaults(func=_cmd_check_publish)

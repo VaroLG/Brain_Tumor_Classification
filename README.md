@@ -51,6 +51,8 @@ btc rg-fetch-cptac --out-dir data/rg
 btc rg-analyze --config configs/radiogenomics_necrosis_hypoxia.yaml --out-dir runs/radiogenomica
 ```
 
+**Datos y licencias:** las imágenes de CPTAC están bajo la *TCIA Restricted License*. El repo publica solo código y resultados agregados; las tablas por paciente de cohortes restringidas se escriben en `solo_local/` (ignorada por git) y `btc rg-check-publish` verifica que no se filtren. Detalle en [`docs/DATOS_Y_LICENCIAS.md`](docs/DATOS_Y_LICENCIAS.md).
+
 `rg-overlap` aplica la regla de factibilidad del plan (n ≥ 85 procede; n < 60 se detiene) antes
 de descargar nada más. El código se valida sobre cohortes sintéticas con efecto conocido: recupera
 el efecto cuando existe y su tasa de falsos positivos sin efecto es la nominal (≈ 5 %).
@@ -211,5 +213,5 @@ Si usas los datasets, cita también sus publicaciones originales (UPENN-GBM: Bak
 
 ## Licencia
 
-Código bajo licencia [MIT](LICENSE). Los datos de imagen médica no se incluyen y tienen sus
-propias licencias.
+Código bajo licencia [MIT](LICENSE). Los datos de imagen médica y ómicos no se incluyen y tienen sus
+propias licencias: ver [`docs/DATOS_Y_LICENCIAS.md`](docs/DATOS_Y_LICENCIAS.md).

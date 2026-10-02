@@ -8,6 +8,8 @@
 
 # --- Resultados de entrenamiento (modelos, métricas, figuras) ---
 /runs/
+# Salidas por paciente de cohortes con licencia restringida (ver docs/DATOS_Y_LICENCIAS.md)
+solo_local/
 *.keras
 *.h5
 
