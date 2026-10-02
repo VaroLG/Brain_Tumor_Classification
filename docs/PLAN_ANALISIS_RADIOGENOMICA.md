@@ -179,7 +179,17 @@ también sobre una cohorte sintética con efecto conocido (`scripts/demo_radioge
 para comprobar que los métodos recuperan el efecto plantado y no inventan uno
 cuando no existe.
 
-## 8. Desviaciones del plan
+## 8. Registro de factibilidad (comprobaciones previas a los datos)
+
+| Fecha | Comprobación | Resultado |
+|---|---|---|
+| 2026-10-02 | API de cBioPortal, estudio `gbm_tcga` | 528 muestras con U133A, 166 con RNA-seq, 290 secuenciadas, 15 mutaciones IDH1/2. El atributo de edad es `AGE`. Los endpoints usados por `btc.radiogenomics.cohorts.CBioPortal` responden como se espera. |
+| 2026-10-02 | Acceso a imágenes en TCIA | Las colecciones cerebrales con DICOM original (TCGA-GBM, TCGA-LGG, CPTAC-GBM, REMBRANDT, Ivy GAP…) están bajo **TCIA Restricted License** (riesgo de reconstrucción facial): requieren cuenta de TCIA y acuerdo de licencia aprobado. De las colecciones cerebrales, solo UPENN-GBM es pública anónima. |
+| 2026-10-02 | BraTS-TCGA-GBM | Paquete procesado (sin cráneo, con segmentaciones) de acceso abierto (CC BY 3.0) vía Aspera: **102 pacientes**. Es la fuente de imagen del descubrimiento; no requiere la licencia restringida. |
+| pendiente | Solapamiento 102 ∩ U133A | Requiere la lista de pacientes del paquete BraTS-TCGA-GBM (`btc rg-overlap`). |
+| pendiente | Imagen de CPTAC-GBM | Requiere licencia restringida de TCIA (DICOM original) o los casos CPTAC incluidos en BraTS 2021 (sin cráneo, segmentados; acceso vía Synapse/TCIA). |
+
+## 9. Desviaciones del plan
 | Fecha | Cambio | Motivo |
 |---|---|---|
 | — | — | — |
