@@ -64,8 +64,13 @@ def build_dicom_manifest(
     label_of = dict(zip(labels["patient_id"].astype(str), labels["label"], strict=True))
     manual = None
     if selected_slices is not None:
-        manual = set(zip(selected_slices["patient_id"].astype(str),
-                         selected_slices["instance_number"].astype(int), strict=True))
+        manual = set(
+            zip(
+                selected_slices["patient_id"].astype(str),
+                selected_slices["instance_number"].astype(int),
+                strict=True,
+            )
+        )
 
     # 1) Indexar ficheros por serie leyendo solo cabeceras (rápido)
     series: dict[tuple[str, str], list[tuple[int, Path]]] = defaultdict(list)
@@ -86,7 +91,7 @@ def build_dicom_manifest(
             chosen = [(i, p) for i, p in items if (pid, i) in manual]
         else:
             lo, hi = int(n * (0.5 - central_fraction / 2)), int(n * (0.5 + central_fraction / 2))
-            window = items[lo:max(hi, lo + 1)]
+            window = items[lo : max(hi, lo + 1)]
             pick = np.linspace(0, len(window) - 1, min(max_slices, len(window))).round().astype(int)
             chosen = [window[k] for k in sorted(set(pick))]
         for inst, path in chosen:
@@ -94,10 +99,20 @@ def build_dicom_manifest(
             img = crop_to_foreground(normalize_to_uint8(arr))
             png = Path(out_dir) / label_of[pid] / f"{pid}_{uid[-8:]}_{inst:03d}.png"
             save_png(img, png)
-            rows.append({"image_path": str(png), "patient_id": pid, "label": label_of[pid],
-                         "series_uid": uid, "instance_number": inst})
+            rows.append(
+                {
+                    "image_path": str(png),
+                    "patient_id": pid,
+                    "label": label_of[pid],
+                    "series_uid": uid,
+                    "instance_number": inst,
+                }
+            )
 
     manifest = pd.DataFrame(rows)
-    log.info("Manifest DICOM: %d imágenes de %d pacientes", len(manifest),
-             manifest["patient_id"].nunique() if rows else 0)
+    log.info(
+        "Manifest DICOM: %d imágenes de %d pacientes",
+        len(manifest),
+        manifest["patient_id"].nunique() if rows else 0,
+    )
     return manifest

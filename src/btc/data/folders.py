@@ -41,8 +41,9 @@ def dhash(path: str | Path, size: int = 8) -> str:
     recompresión JPEG, así que detecta duplicados que un hash MD5 no vería.
     """
     with Image.open(path) as im:
-        small = np.asarray(im.convert("L").resize((size + 1, size), Image.Resampling.LANCZOS),
-                           dtype=np.int16)
+        small = np.asarray(
+            im.convert("L").resize((size + 1, size), Image.Resampling.LANCZOS), dtype=np.int16
+        )
     bits = (small[:, 1:] > small[:, :-1]).flatten()
     return f"{int(''.join('1' if b else '0' for b in bits), 2):0{size * size // 4}x}"
 
@@ -64,8 +65,12 @@ def build_folder_manifest(root: str | Path, group_by_hash: bool = True) -> pd.Da
     if group_by_hash:
         df["patient_id"] = "h_" + df["image_path"].map(dhash)
         n_dup = len(df) - df["patient_id"].nunique()
-        log.info("dHash: %d imágenes en %d grupos (%d casi-duplicados agrupados)",
-                 len(df), df["patient_id"].nunique(), n_dup)
+        log.info(
+            "dHash: %d imágenes en %d grupos (%d casi-duplicados agrupados)",
+            len(df),
+            df["patient_id"].nunique(),
+            n_dup,
+        )
         # Un mismo hash con dos etiquetas distintas indica un duplicado mal etiquetado
         conflicts = df.groupby("patient_id")["label"].nunique()
         if (conflicts > 1).any():

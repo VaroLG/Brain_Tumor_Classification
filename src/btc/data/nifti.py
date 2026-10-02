@@ -47,8 +47,8 @@ class SliceSelection:
     """Criterio para decidir qué cortes de un volumen se guardan."""
 
     axis: str = "axial"
-    min_tumor_fraction: float = 0.25   # área tumoral mínima relativa al corte con más tumor
-    max_slices: int = 10               # tope por paciente (evita que pacientes grandes dominen)
+    min_tumor_fraction: float = 0.25  # área tumoral mínima relativa al corte con más tumor
+    max_slices: int = 10  # tope por paciente (evita que pacientes grandes dominen)
 
 
 def split_subject_id(subject: str) -> tuple[str, str]:
@@ -109,8 +109,8 @@ def build_nifti_manifest(
     modality: str = "T1GD",
     image_glob: str = "**/{subject}_{modality}.nii.gz",
     mask_globs: tuple[str, ...] = (
-        "**/{subject}_segm.nii.gz",                    # segmentación revisada manualmente
-        "**/{subject}_automated_approx_segm.nii.gz",   # automática (resto de sujetos)
+        "**/{subject}_segm.nii.gz",  # segmentación revisada manualmente
+        "**/{subject}_automated_approx_segm.nii.gz",  # automática (resto de sujetos)
     ),
     visits: tuple[str, ...] = ("11",),
     selection: SliceSelection | None = None,
@@ -135,8 +135,12 @@ def build_nifti_manifest(
     selection = selection or SliceSelection()
     label_of = dict(zip(labels["patient_id"].astype(str), labels["label"], strict=True))
 
-    subjects = sorted({p.name.split(f"_{modality}")[0]
-                       for p in nifti_root.glob(image_glob.format(subject="*", modality=modality))})
+    subjects = sorted(
+        {
+            p.name.split(f"_{modality}")[0]
+            for p in nifti_root.glob(image_glob.format(subject="*", modality=modality))
+        }
+    )
     rows, skipped = [], 0
     for subject in subjects:
         patient, visit = split_subject_id(subject)
@@ -156,17 +160,30 @@ def build_nifti_manifest(
         mask = np.asarray(nib.load(mask_path).dataobj)
         if image.shape != mask.shape:
             skipped += 1
-            log.warning("Forma distinta imagen %s vs máscara %s en %s", image.shape, mask.shape, subject)
+            log.warning(
+                "Forma distinta imagen %s vs máscara %s en %s", image.shape, mask.shape, subject
+            )
             continue
 
         label = label_of[patient]
         for idx, sl in iter_slices(image, mask, selection):
             png = out_dir / label / f"{subject}_{modality}_{selection.axis}_{idx:03d}.png"
             save_png(sl, png)
-            rows.append({"image_path": str(png), "patient_id": patient, "label": label,
-                         "subject": subject, "slice_idx": idx})
+            rows.append(
+                {
+                    "image_path": str(png),
+                    "patient_id": patient,
+                    "label": label,
+                    "subject": subject,
+                    "slice_idx": idx,
+                }
+            )
 
     manifest = pd.DataFrame(rows)
-    log.info("Manifest NIfTI: %d imágenes de %d pacientes (%d sujetos omitidos)",
-             len(manifest), manifest["patient_id"].nunique() if rows else 0, skipped)
+    log.info(
+        "Manifest NIfTI: %d imágenes de %d pacientes (%d sujetos omitidos)",
+        len(manifest),
+        manifest["patient_id"].nunique() if rows else 0,
+        skipped,
+    )
     return manifest
