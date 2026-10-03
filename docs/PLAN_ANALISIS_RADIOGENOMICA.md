@@ -189,10 +189,11 @@ cuando no existe.
 | pendiente | Solapamiento 102 ∩ U133A | Requiere la lista de pacientes del paquete BraTS-TCGA-GBM (`btc rg-overlap`). |
 | 2026-10-02 | Licencia restringida de TCIA para CPTAC-GBM | **Concedida** (correo del Help Desk de TCIA, colección CPTAC-GBM, DOI 10.7937/K9/TCIA.2018.3RJE41Q1). El formulario de licencia firmado es de noviembre de 2024 y la RM se descargó en diciembre de 2024, así que la vigencia de 3 años probablemente cuenta desde entonces: **confirmar la fecha del correo de aprobación**. Los derivados por paciente siguen sin poder publicarse. |
 | 2026-10-03 | Imagen de CPTAC-GBM en local | Encontrada en la carpeta local del TFM: descarga completa del NBIA Data Retriever (**~70 pacientes**: 71 elementos en la carpeta, DICOM original con `metadata.csv`), una descarga anterior incompleta (13 pacientes, descartar) y una conversión a NIfTI de todas las series (1.486 volúmenes, sin máscaras ni ID de paciente en el nombre, así que no se usa). En el paciente revisado hay FLAIR axial, T1 axial, T1 con contraste y T2. |
-| pendiente | Imagen de BraTS-TCGA-GBM en local | No está en la carpeta del TFM, ni en Descargas ni en Documentos. Hay que descargarla (acceso abierto, unos 767 MB). |
+| 2026-10-03 | Paquete BraTS-TCGA-GBM (Aspera) | **Ya no se puede descargar**: la página de Aspera muestra "Files on server: No" (73 B). Tampoco hay copia local. |
+| 2026-10-03 | Fuente sustituta: BraTS 2020 (entrenamiento) | Incluye los **135 TCGA-GBM preoperatorios** segmentados por expertos (etiquetas 1/2/4, 1 mm³, sin cráneo) y un `name_mapping.csv` con la equivalencia entre IDs de BraTS y de TCGA. `btc rg-imaging --id-from stem --id-map name_mapping.csv` lo soporta. Pendiente: descargarlo y confirmar los nombres de columna. |
 | pendiente | Secuencias y segmentación de CPTAC-GBM | Contar a partir de `metadata.csv` cuántos de los ~70 tienen las 4 secuencias preoperatorias. Las máscaras no vienen con la colección: usar los casos CPTAC de BraTS 2021 si están, o una segmentación automática con un modelo BraTS preentrenado (que se declarará como desviación). |
 
 ## 9. Desviaciones del plan
 | Fecha | Cambio | Motivo |
 |---|---|---|
-| — | — | — |
+| 2026-10-03 | Imagen del descubrimiento: BraTS 2020 en lugar del paquete BraTS-TCGA-GBM (2017) | El paquete de 2017 ya no se distribuye. BraTS 2020 cubre los mismos pacientes y más (135 frente a 102), con segmentaciones revisadas por expertos; la exposición y las covariables se calculan igual. Se decide antes de ver ningún dato de la asociación. |

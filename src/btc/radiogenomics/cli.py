@@ -30,9 +30,10 @@ def _read_table(path: str | Path) -> pd.DataFrame:
 
 
 def _cmd_imaging(a: argparse.Namespace) -> None:
-    from btc.radiogenomics.imaging import imaging_table
+    from btc.radiogenomics.imaging import imaging_table, load_id_map
 
-    df = imaging_table(a.seg_root, a.pattern, a.cohort, a.id_from)
+    id_map = load_id_map(a.id_map, a.id_map_from, a.id_map_to) if a.id_map else None
+    df = imaging_table(a.seg_root, a.pattern, a.cohort, a.id_from, id_map=id_map)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(a.out)
     log.info(
@@ -203,10 +204,17 @@ def add_subparsers(sub: argparse._SubParsersAction) -> None:
     s.add_argument(
         "--pattern",
         default="**/*_GlistrBoost_ManuallyCorrected.nii.gz",
-        help="Glob de las máscaras (BraTS 2021: '**/*_seg.nii.gz')",
+        help="Glob de las máscaras (BraTS 2020: '**/*_seg.nii'; BraTS 2021: '**/*_seg.nii.gz')",
     )
     s.add_argument("--cohort", choices=["tcga", "cptac", "other"], default="tcga")
-    s.add_argument("--id-from", choices=["prefix", "parent"], default="prefix")
+    s.add_argument("--id-from", choices=["prefix", "parent", "stem"], default="prefix")
+    s.add_argument(
+        "--id-map",
+        default=None,
+        help="CSV de equivalencias de IDs (p. ej. name_mapping.csv de BraTS 2020)",
+    )
+    s.add_argument("--id-map-from", default="BraTS_2020_subject_ID")
+    s.add_argument("--id-map-to", default="TCGA_TCIA_subject_ID")
     s.add_argument("--out", required=True)
     s.set_defaults(func=_cmd_imaging)
 

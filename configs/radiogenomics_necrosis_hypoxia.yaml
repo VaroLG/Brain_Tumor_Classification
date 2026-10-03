@@ -13,7 +13,7 @@ data:
     - data/msigdb/c2.cgp.Hs.symbols.gmt
   discovery:
     name: TCGA-GBM
-    license: open                 # BraTS-TCGA-GBM (CC BY 3.0) + ómica abierta de TCGA
+    license: open                 # imagen: BraTS 2020 (casos TCGA-GBM) + ómica abierta de TCGA
     id_format: tcga
     imaging: data/rg/tcga_imaging.csv
     clinical: data/rg/tcga_clinical.csv

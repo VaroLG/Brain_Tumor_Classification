@@ -93,6 +93,35 @@ def test_imaging_table_reads_nifti(tmp_path):
     assert (df["necrosis_fraction_core"] == 0.5).all()
 
 
+def test_imaging_table_brats2020_id_map(tmp_path):
+    """BraTS 2020: IDs propios + name_mapping.csv; los casos no TCGA se descartan."""
+    nib = pytest.importorskip("nibabel")
+    from btc.radiogenomics.imaging import imaging_table, load_id_map
+
+    for i in (1, 2, 3):
+        d = tmp_path / f"BraTS20_Training_00{i}"
+        d.mkdir()
+        m = np.zeros((6, 6, 6), np.uint8)
+        m[:1], m[1:3] = 1, 4  # 1/3 del núcleo es necrótico
+        nib.save(nib.Nifti1Image(m, np.eye(4)), d / f"BraTS20_Training_00{i}_seg.nii")
+    pd.DataFrame(
+        {
+            "Grade": ["HGG", "HGG", "HGG"],
+            "BraTS_2020_subject_ID": [f"BraTS20_Training_00{i}" for i in (1, 2, 3)],
+            "TCGA_TCIA_subject_ID": ["TCGA-02-0006", None, "TCGA-08-0244"],  # 002 no es TCGA
+        }
+    ).to_csv(tmp_path / "name_mapping.csv", index=False)
+
+    id_map = load_id_map(
+        tmp_path / "name_mapping.csv", "BraTS_2020_subject_ID", "TCGA_TCIA_subject_ID"
+    )
+    df = imaging_table(tmp_path, "**/*_seg.nii", "tcga", id_from_name="stem", id_map=id_map)
+    assert list(df.index) == ["TCGA-02-0006", "TCGA-08-0244"]
+    assert np.allclose(df["necrosis_fraction_core"], 1 / 3)
+    with pytest.raises(KeyError, match="Disponibles"):
+        load_id_map(tmp_path / "name_mapping.csv", "BraTS_2020_subject_ID", "TCIA_ID")
+
+
 # --- firmas ---------------------------------------------------------------------
 def test_gmt_roundtrip(tmp_path):
     write_gmt({"A": ["g1", "G2", "g1"]}, tmp_path / "x.gmt")
