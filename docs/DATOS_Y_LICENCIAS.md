@@ -35,9 +35,10 @@ paciente. Requiere cuenta de TCIA y un acuerdo aprobado. Sus puntos clave:
 - 📌 La licencia cubre el proyecto descrito al solicitarla y dura 3 años. Si se
   solicitó para el TFM, confirmar que este estudio entra en ese alcance.
 
-**Estado en este proyecto:** acceso a CPTAC-GBM **concedido** por TCIA el
-2026-10-02. Caduca a los 3 años y solo cubre al titular de la cuenta: un coautor
-necesitaría su propia aprobación.
+**Estado en este proyecto:** acceso a CPTAC-GBM **concedido** por TCIA. El
+formulario se firmó en noviembre de 2024; la vigencia de 3 años cuenta desde la
+aprobación (comprobar la fecha en el correo). Solo cubre al titular de la cuenta:
+un coautor necesitaría su propia aprobación.
 
 ## Cómo lo aplica este repositorio
 
