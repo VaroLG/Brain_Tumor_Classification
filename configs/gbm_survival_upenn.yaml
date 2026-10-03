@@ -1,0 +1,27 @@
+# Supervivencia global en GBM, corta vs larga respecto a la mediana, con censura (UPENN-GBM)
+name: gbm_survival_upenn
+
+data:
+  manifest: data/gbm_survival.csv        # generado con `btc manifest-*` + `btc split`
+  classes: [short, long]   # el orden define el índice de cada clase
+  image_size: 240
+  batch_size: 32
+
+model:
+  backbone: efficientnetb1   # efficientnetb0|efficientnetb1|vgg19|resnet50|mobilenetv2|xception
+  dense_units: [256]
+  dropout: 0.3
+  weights: imagenet
+
+train:
+  seed: 42
+  head_epochs: 20
+  head_lr: 1.0e-3
+  finetune_epochs: 20
+  finetune_lr: 1.0e-5
+  finetune_layers: 30
+  early_stopping_patience: 5
+  class_weights: true
+  augment: true
+
+output_dir: runs
